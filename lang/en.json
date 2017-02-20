@@ -1,0 +1,11 @@
+{
+  "app.systeminformation": "System information",
+  "app.frameworkversion": "Framework version",
+  "app.serverversion": "Server version",
+  "app.current": "Current",
+  "app.latest": "Latest",
+  "app.updatecheck": "Check for updates",
+  "app.confirmframeworkupdate": "Updating the framework is a one-way trip.</br></br>Do you want to continue?",
+  "app.frameworkupdatesuccess": "The framework has successfully been updated to v%{version}.",
+  "app.frameworkupdateerror": "An error occurred.</br></br>%{error}"
+}
