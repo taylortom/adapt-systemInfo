@@ -18,11 +18,11 @@ rest.get('/updater/framework/installed', function(req, res, next) {
     if(error) {
       return res.status(500).json({ error: error.message });
     }
-    helpers.getPackageVersion(helpers.getFrameworkDir(), function(error, data) {
+    helpers.getCurrentVersionData(helpers.getFrameworkDir(), function(error, data) {
       if(error) {
         return res.status(500).json({ error: error.message });
       }
-      res.status(200).json({ latest: data });
+      res.status(200).json(data);
     });
   });
 });
@@ -36,7 +36,7 @@ rest.get('/updater/framework/latest', function(req, res, next) {
       if(error) {
         return res.status(500).json({ error: error.message });
       }
-      res.status(200).json({ latest: data });
+      res.status(200).json({ version: data });
     });
   });
 });
@@ -55,7 +55,7 @@ rest.put('/updater/framework/update', function(req, res, next) {
         return res.status(500).json({ error: error });
       }
       // TODO do we need to verify this?
-      res.status(200).json({ installed: req.body.version });
+      res.status(200).json({ version: req.body.version });
     });
   });
 });

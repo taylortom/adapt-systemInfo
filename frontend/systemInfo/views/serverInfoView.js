@@ -4,15 +4,7 @@ define(function(require) {
 
   var ServerInfoView = InfoView.extend({
     className: 'serverInfo',
-    route: 'server',
-
-    preRender: function() {
-      var self = this;
-      this.getData('installed', function(data) {
-        self.model.set('installed', data);
-        self.render();
-      });
-    }
+    route: 'server'
   }, {
     template: 'serverInfo'
   });

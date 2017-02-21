@@ -6,6 +6,9 @@ define(function(require) {
 
   var InfoView = OriginView.extend({
     tagName: 'div',
+    settings: {
+      autoRender: false
+    },
 
     events: {
       'click .btn': 'onButtonClicked'
@@ -14,12 +17,15 @@ define(function(require) {
     initialize: function(options) {
       OriginView.prototype.initialize.apply(this, arguments);
       this.model = new Backbone.Model();
+      console.log('initialize', this.route);
     },
 
     preRender: function() {
       var self = this;
       this.getData('installed', function(data) {
-        self.model.set('installed', data);
+        console.log(self.route, data);
+        self.model.set('git', data.git);
+        self.model.set('installed', data.version);
         self.render();
       });
     },
@@ -39,6 +45,7 @@ define(function(require) {
             text: data.responseJSON.error
           });
         }
+        // don't nest if there's only one value
         if(Object.values(data).length === 1) {
           data = Object.values(data)[0];
         }
@@ -53,6 +60,26 @@ define(function(require) {
   }, {
     template: 'systemInfo'
   });
+
+  Handlebars.registerHelper('formatGitData', function(data) {
+    var isGitHub = data.remote.search('github.com') > -1;
+    if(!isGitHub) {
+      return data.commit + ' on ' + data.branch;
+    }
+    // we know GitHub's URL structure, so can add hyperlinks
+
+    var match = data.remote.match(/github.com:(.+)\/(.+)\.git/);
+    var ownerName = match[1];
+    var repoName = match[2];
+    var repoURL = 'https://github.com/' + ownerName + '/' + repoName;
+
+    return linkHTML(repoURL + '/commit/' + data.commit, data.commit) + ' on ' +
+      linkHTML(repoURL + '/tree/' + data.branch, data.branch);
+  });
+
+  function linkHTML(link, label) {
+    return '<a class="git" href="' + link + '" target="_blank">' + label + '</a>';
+  }
 
   return InfoView;
 });

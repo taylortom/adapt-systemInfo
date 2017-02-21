@@ -5,6 +5,10 @@
       <div class="label">{{t "app.current"}}:</div>
       <div class="value">{{ installed }}</div>
     </div>
+    <div class="stat">
+      <div class="label">{{t "app.git"}}:</div>
+      <div class="value">{{{formatGitData git}}}</div>
+    </div>
     {{#if latest}}{{#if isUpdateAvailable}}
       <div class="stat">
         <div class="label">{{t "app.latest"}}:</div>

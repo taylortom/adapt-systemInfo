@@ -32,11 +32,67 @@ var exports = module.exports = {
       OutputConstants.Folders.Framework
     );
   },
+  getCurrentVersionData(repoDir, cb) {
+    async.parallel([
+      function(cb) {
+        exports.getPackageVersion(app.configuration.getConfig('serverRoot'), cb);
+      },
+      function(cb) {
+        exports.getGitInfo(app.configuration.getConfig('serverRoot'), cb);
+      }
+    ], function(error, data) {
+      cb(error, { version: data[0], git: data[1] });
+    });
+  },
   getPackageVersion(repoDir, cb) {
-    // TODO maybe use a contant for package.json
+    // TODO maybe use a constant for package.json
     var packagePath = path.join(repoDir, 'package.json');
     fs.readJson(packagePath, function(error, packageObj) {
       cb(error, packageObj.version);
+    });
+  },
+  getGitInfo(repoDir, cb) {
+    // get branch info
+    exec("git branch -vv", { cwd: repoDir }, function(error, stdout, stderr) {
+      if(error) return cb(error);
+      if (stderr.length !== 0) return cb(stderr);
+      if (stdout.length === 0) return cb(null, {});
+
+      // just pull out the latest for the current branch
+      var statusInfo = stdout.match(/\* (.+)/)[1];
+
+      var localBranch = statusInfo.match(/(\S+)\s+/)[1];
+      statusInfo = statusInfo.replace(localBranch,'');
+
+      var commit = statusInfo.match(/(\S+)/)[1];
+      statusInfo = statusInfo.replace(commit,'');
+
+      // return data
+      var data = {};
+
+      data['commit'] = commit;
+
+      var trackingBranchMatch = statusInfo.match(/\[(\S+)(:.+)?\]/);
+      if(!trackingBranchMatch) {
+        data['branch'] = localBranch + ' (untracked)';
+        return cb(null, data);
+      }
+
+      var remoteParts = trackingBranchMatch[1].split('/');
+      var remote = remoteParts.splice(0,1);
+
+      data['branch'] = remoteParts.join('/');
+
+      // get the remote
+      exec("git remote get-url " + remote, { cwd: repoDir }, function(error, stdout, stderr) {
+        if(error) return cb(error);
+        if (stderr.length != 0) return cb(stderr);
+        if (stdout.length === 0) return cb(null, {});
+
+        data['remote'] = stdout.replace('\n','');
+
+        cb(null, data);
+      });
     });
   },
 

@@ -8,11 +8,11 @@ rest.get('/updater/server/installed', function(req, res, next) {
     if(error) {
       return res.status(403).json({ error: error.message });
     }
-    helpers.getPackageVersion(app.configuration.getConfig('serverRoot'), function(error, data) {
+    helpers.getCurrentVersionData(app.configuration.getConfig('serverRoot'), function(error, data) {
       if(error) {
         return res.status(500).json({ error: error.message });
       }
-      res.status(200).json({ installed: data });
+      res.status(200).json(data);
     });
   });
 });
@@ -26,7 +26,7 @@ rest.get('/updater/server/latest', function(req, res, next) {
       if(error) {
         return res.status(500).json({ error: error.message });
       }
-      res.status(200).json({ latest: data });
+      res.status(200).json({ version: data });
     });
   });
 });
