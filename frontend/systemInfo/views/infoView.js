@@ -62,9 +62,9 @@ define(function(require) {
   });
 
   Handlebars.registerHelper('formatGitData', function(data) {
-    var isGitHub = data.remote.search('github.com') > -1;
+    var isGitHub = data.remote && data.remote.search('github.com') > -1;
     if(!isGitHub) {
-      return data.commit + ' on ' + data.branch;
+      return '<em><strong>' + data.commit + '</strong></em> on <em><strong>' + data.branch + '</strong></em>';
     }
     // we know GitHub's URL structure, so can add hyperlinks
 
