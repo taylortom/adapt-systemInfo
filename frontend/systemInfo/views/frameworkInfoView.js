@@ -2,8 +2,8 @@
 define(function(require) {
   var _ = require('underscore');
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var InfoView = require('./infoView.js');
+  var Origin = require('core/origin');
+  var InfoView = require('./infoView');
 
   var FrameworkInfoView = InfoView.extend({
     className: 'frameworkInfo',
@@ -11,32 +11,31 @@ define(function(require) {
 
     checkForUpdate: function() {
       var self = this;
-      self.updateButton(window.polyglot.t('app.checking'), true);
-      this.getData('latest', function(data) {
-        self.model.set({
+      this.updateButton(Origin.l10n.t('app.checking'), true);
+      this.getData('latest', _.bind(function(data) {
+        this.model.set({
           latest: data,
-          isUpdateAvailable: self.model.get('installed') !== data
+          isUpdateAvailable: this.model.get('installed') !== data
         });
-        self.render();
-      });
+        this.render();
+      }, this));
     },
 
     updateFramework: function() {
-      var self = this;
       Origin.Notify.confirm({
         type: 'warning',
-        text: window.polyglot.t('app.confirmframeworkupdate'),
+        text: Origin.l10n.t('app.confirmframeworkupdate'),
         destructive: true,
-        callback: function(isConfirmed) {
+        callback: _.bind(function(isConfirmed) {
           if(!isConfirmed) return;
-          self.updateButton(window.polyglot.t('app.updating'), true);
-          $.ajax(self.getRoutePrefix() + 'update', {
+          this.updateButton(Origin.l10n.t('app.updating'), true);
+          $.ajax(this.getRoutePrefix() + 'update', {
             method: 'PUT',
-            data: { version: self.model.get('latest') },
-            success: _.bind(self.onUpdateSuccess, self),
-            error: _.bind(self.onUpdateError, self)
+            data: { version: this.model.get('latest') },
+            success: _.bind(this.onUpdateSuccess, this),
+            error: _.bind(this.onUpdateError, this)
           });
-        }
+        }, this)
       });
     },
 
@@ -54,7 +53,7 @@ define(function(require) {
       var newVersion = Object.values(data)[0];
       Origin.Notify.alert({
         type: 'success',
-        text: window.polyglot.t('app.frameworkupdatesuccess', { version: newVersion })
+        text: Origin.l10n.t('app.frameworkupdatesuccess', { version: newVersion })
       });
       this.model.set({
         installed: newVersion,
@@ -70,7 +69,7 @@ define(function(require) {
       setTimeout(function() {
         Origin.Notify.alert({
           type: 'error',
-          text: window.polyglot.t('app.frameworkupdateerror', { error: data.responseJSON.error })
+          text: Origin.l10n.t('app.frameworkupdateerror', { error: data.responseJSON.error })
         });
         self.render();
       }, 300);

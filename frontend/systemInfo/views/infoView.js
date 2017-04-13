@@ -1,8 +1,8 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
   var Backbone = require('backbone');
-  var Origin = require('coreJS/app/origin');
-  var OriginView = require('coreJS/app/views/originView');
+  var Origin = require('core/origin');
+  var OriginView = require('core/views/originView');
 
   var InfoView = OriginView.extend({
     tagName: 'div',
@@ -17,17 +17,16 @@ define(function(require) {
     initialize: function(options) {
       OriginView.prototype.initialize.apply(this, arguments);
       this.model = new Backbone.Model();
-      console.log('initialize', this.route);
     },
 
     preRender: function() {
-      var self = this;
-      this.getData('installed', function(data) {
-        console.log(self.route, data);
-        self.model.set('git', data.git);
-        self.model.set('installed', data.version);
-        self.render();
-      });
+      this.getData('installed', _.bind(function(data) {
+        this.model.set({
+          git: data.git,
+          installed: data.version
+        });
+        this.render();
+      }, this));
     },
 
     updateButton: function(newLabel, animate) {
@@ -38,7 +37,7 @@ define(function(require) {
     },
 
     getData: function(endRoute, cb) {
-      var done = function(data, status) {
+      var done = _.bind(function(data, status) {
         if(status === 'error') {
           return Origin.Notify.alert({
             type: 'error',
@@ -50,7 +49,7 @@ define(function(require) {
           data = Object.values(data)[0];
         }
         cb(data);
-      }
+      }, this);
       $.getJSON(this.getRoutePrefix() + endRoute, done).fail(done);
     },
 
@@ -66,13 +65,11 @@ define(function(require) {
     if(!isGitHub) {
       return '<em><strong>' + data.commit + '</strong></em> on <em><strong>' + data.branch + '</strong></em>';
     }
-    // we know GitHub's URL structure, so can add hyperlinks
-
     var match = data.remote.match(/github.com:(.+)\/(.+)\.git/);
     var ownerName = match[1];
     var repoName = match[2];
     var repoURL = 'https://github.com/' + ownerName + '/' + repoName;
-
+    // we know GitHub's URL structure, so can add hyperlinks
     return linkHTML(repoURL + '/commit/' + data.commit, data.commit) + ' on ' +
       linkHTML(repoURL + '/tree/' + data.branch, data.branch);
   });

@@ -1,4 +1,5 @@
 // NPM includes
+var async = require('async');
 var exec = require('child_process').exec;
 var fs = require('fs-extra');
 var path = require('path');
@@ -35,10 +36,10 @@ var exports = module.exports = {
   getCurrentVersionData(repoDir, cb) {
     async.parallel([
       function(cb) {
-        exports.getPackageVersion(app.configuration.getConfig('serverRoot'), cb);
+        exports.getPackageVersion(path.join(app.configuration.getConfig('serverRoot'), repoDir), cb);
       },
       function(cb) {
-        exports.getGitInfo(app.configuration.getConfig('serverRoot'), cb);
+        exports.getGitInfo(path.join(app.configuration.getConfig('serverRoot'), repoDir), cb);
       }
     ], function(error, data) {
       cb(error, { version: data[0], git: data[1] });
