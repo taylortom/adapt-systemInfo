@@ -5,7 +5,7 @@ define(function(require) {
   var SystemInfoSidebarView = require('./views/systemInfoSidebarView');
 
   Origin.on('globalMenu:systemInfo:open', function() {
-    Origin.router.navigate('#/systemInfo', {trigger: true});
+    Origin.router.navigateTo('systemInfo');
   });
 
   Origin.on('origin:dataReady login:changed', function() {
