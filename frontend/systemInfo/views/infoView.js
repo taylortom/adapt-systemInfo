@@ -65,7 +65,7 @@ define(function(require) {
     if(!isGitHub) {
       return '<em><strong>' + data.commit + '</strong></em> on <em><strong>' + data.branch + '</strong></em>';
     }
-    var match = data.remote.match(/github.com:(.+)\/(.+)\.git/);
+    var match = data.remote.match(/github.com:?\/(.+)\/(.+)\.git/);
     var ownerName = match[1];
     var repoName = match[2];
     var repoURL = 'https://github.com/' + ownerName + '/' + repoName;
