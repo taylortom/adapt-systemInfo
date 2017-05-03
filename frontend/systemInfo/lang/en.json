@@ -8,5 +8,6 @@
   "app.updatecheck": "Check for updates",
   "app.confirmframeworkupdate": "Updating the framework is a one-way trip.</br></br>Do you want to continue?",
   "app.frameworkupdatesuccess": "The framework has successfully been updated to v%{version}.",
-  "app.frameworkupdateerror": "An error occurred.</br></br>%{error}"
+  "app.frameworkupdateerror": "An error occurred.</br></br>%{error}",
+  "app.systemInfoSidebarHeading": "Tools"
 }

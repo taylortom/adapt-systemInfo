@@ -22,10 +22,16 @@ define(function(require) {
   });
 
   Origin.on('router:systemInfo', function(location, subLocation, action) {
+    Origin.sidebar.addView(new SystemInfoSidebarView().$el);
+    showView();
+  });
+
+  Origin.on('systemInfo:open', showView);
+
+  function showView() {
     Origin.trigger('location:title:update', {
       title: Origin.l10n.t('app.systeminformation')
     });
-    Origin.sidebar.addView(new SystemInfoSidebarView().$el);
     Origin.contentPane.setView(SystemInfoView);
-  });
+  }
 });
